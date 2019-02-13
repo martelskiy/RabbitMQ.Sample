@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    hostname: "local-rabbitMQ"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "SWQOKODSQALRPCLNMEQG"
+      RABBITMQ_DEFAULT_USER: "helloworld"
+      RABBITMQ_DEFAULT_PASS: "helloworld"
+      RABBITMQ_DEFAULT_VHOST: "helloworld"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmqlocal"
+
+  rabbitmq.sender:
+    image: ${DOCKER_REGISTRY-}rabbitmqsender
+    depends_on: 
+      - "rabbitmq"
+    build:
+      context: .
+      dockerfile: RabbitMQ.Sender/Dockerfile
+
+  rabbitmq.receiver:
+    image: ${DOCKER_REGISTRY-}rabbitmqreceiver
+    depends_on: 
+      - "rabbitmq"
+    build:
+      context: .
+      dockerfile: RabbitMQ.Receiver/Dockerfile
